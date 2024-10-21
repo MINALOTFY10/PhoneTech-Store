@@ -9,8 +9,7 @@
 - [User Roles](#user-roles)
 - [System Design](#system-design)
 - [Installation](#installation)
-- [Contributing](#contributing)
-- [License](#license)
+
 
 ## Project Overview
 
@@ -63,21 +62,8 @@ The platform uses **Code-First Migrations** for database management, ensuring se
     ```bash
     cd phonetech-shop
     ```
-3. Install dependencies:
-    ```bash
-    dotnet restore
-    ```
-4. Update the database:
-    ```bash
-    dotnet ef database update
-    ```
-5. Run the application:
-    ```bash
-    dotnet run
-    ```
 
-## Contributing
-Contributions are welcome! Please fork this repository and submit a pull request for any enhancements or bug fixes.
-
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+3. Update the database:
+    ```bash
+    database update
+    ```
