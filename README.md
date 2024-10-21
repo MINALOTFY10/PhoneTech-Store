@@ -17,7 +17,7 @@
 PhoneTech is an advanced eCommerce system built with **ASP.NET Core MVC**, **Entity Framework Core**, and **ASP.NET Identity**. The project is built using a Code-First approach, incorporating best practices like the Repository Pattern and Dependency Injection for a clean and maintainable architecture.
 
 ## Demo Video
-[Click here to watch the demo video](https://github.com/MINALOTFY10/PhoneTech-Store/blob/master/Demo.mp4)
+[Click here to watch the demo video](https://youtu.be/LIz7pvUHpk8)
 
 
 ## Features
