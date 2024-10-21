@@ -1,0 +1,104 @@
+﻿@model OrdersPagertViewModel
+
+@{
+    ViewData["Title"] = "My Orders";
+    Pager pager = new Pager();
+
+    int pageNo = 0;
+
+    if (Model.Pager != null)
+    {
+        pager = Model.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+<style>
+    .larger-font {
+        font-size: 1.2rem; /* Adjust the value as per your requirement */
+    }
+</style>
+
+<div class="container my-4">
+    @if (User.IsInRole("Admin"))
+    {
+        <h1 class="text-center mb-4 pt-3 larger-font order-header">Orders</h1>
+    }
+    else
+    {
+        <h1 class="text-center mb-4 pt-3 larger-font order-header">Your Orders</h1>
+    }
+
+    @if (Model.orders == null || !Model.orders.Any())
+    {
+        <div class="alert alert-info text-center larger-font">
+            <p>Your orders page is empty. Start making orders!</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered text-center align-middle larger-font">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Order ID</th>
+                        <th style="font-size: 1.2rem">Total Price</th>
+                        <th>Date</th>
+                        <th>State</th>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <th>Action</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.orders)
+                    {
+                        <tr>
+                            <td>@(item.Id + 20201800175)</td>
+                            <td>$@item.Price</td>
+                            <td>@item.Date.ToShortDateString()</td>
+                            <td>
+                                <span class="badge
+                                    @(item.State == "Processing" ? "bg-primary" :
+                                    item.State == "Shipped" ? "bg-warning" :
+                                    item.State == "Delivered" ? "bg-success" :
+                                    item.State == "Canceled" ? "bg-danger" : "bg-secondary")">
+                                    @item.State
+                                </span>
+                            </td>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <td>
+                                    <a asp-action="Edit" asp-controller="Order" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm mx-1">Edit</a>
+
+                                    <button class="btn btn-outline-danger btn-sm mx-1" onclick="return confirmDelete('@Url.Action("Delete", "Order", new { id = item.Id })');">Cancel</button>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <partial name="_OrdersPager" Model="@Model" />
+</div>
+
+<script>
+    function confirmDelete(deleteUrl) {
+        var result = confirm('Warning: Are you sure you want to Delete this order?');
+        if (result) {
+            window.location.href = deleteUrl;
+            return true;
+        }
+        return false;
+    }
+</script>
+
+<style>
+    .order-header {
+        font-size: 1.9rem;
+        font-weight: 700
+    }
+</style>

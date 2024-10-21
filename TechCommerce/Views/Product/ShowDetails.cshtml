@@ -1,0 +1,213 @@
+﻿@model Product
+
+@{
+    ViewData["Title"] = "ShowDetails";
+}
+
+<div class="container product-details">
+    <!-- Alert for adding products -->
+    <div class="alert alert-success alert-dismissible fade show" id="addToCartAlert" role="alert" style="display:none;">
+        Product added to cart successfully!
+    </div>
+
+    <!-- Alert for exceeding stock -->
+    <div class="alert alert-warning alert-dismissible fade show" id="stockAlert" role="alert" style="display:none;">
+        The quantity selected exceeds the units in stock!
+    </div>
+
+    <div class="row pt-5">
+        <div class="col-md-6 text-center d-flex justify-content-center">
+            <!-- Product Image -->
+            <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid" style="max-width: 80%; height: auto;" />
+        </div>
+
+        <div class="col-md-6 my-auto">
+            <!-- Product Name and Price -->
+            <h1>@Model.Name</h1>
+            <div class="price-section d-flex">
+                <span class="current-price">$@Model.Price</span>
+                <span class="old-price">
+                    @{
+                        string total = (Model.Price * 1.15M).ToString("0.00");
+                    }
+                    $@total
+                </span>
+                <span class="discount-badge my-auto ms-4">-15%</span>
+            </div>
+
+            <!-- Product Description -->
+            <p class="product-description">
+                @Model.Description
+            </p>
+
+            <!-- Quantity Selector -->
+            <div class="input-group mt-3 quantity-control">
+                <button type="button" class="btn btn-outline-secondary" onclick="decrementQuantity(@Model.Id)">-</button>
+                <input type="text" id="quantity_@Model.Id" value="1" class="form-control text-center" readonly style="max-width: 60px;">
+                <button type="button" class="btn btn-outline-secondary" onclick="incrementQuantity(@Model.Id, @Model.Units)">+</button>
+            </div>
+
+            <!-- Add to Cart Button -->
+            @if (!User.IsInRole("Admin"))
+            {
+                <button class="btn btn-dark mt-4 add-to-cart" onclick="addToCart(@Model.Id)">Add to Cart</button>
+            }
+        </div>
+        <hr />
+        <section>
+            <div class="row d-flex justify-content-center mt-3">
+                <div class="col-md-10 col-xl-8 text-center">
+                    <h3 class="mb-4 fw-bold">Rating & Reviews</h3>
+                </div>
+            </div>
+
+            <div class="row text-center">
+                @foreach(var rate in Model.Prate)
+                {
+                    <div class="col-md-4 mb-5 mb-md-0 text-start rate-container p-3 pb-2 px-4 mx-1">
+                        <ul class="list-unstyled d-flex justify-content-center mb-0 stars-container">
+                            @for (int i = 1; i <= 5; ++i)
+                            {
+                                <li>
+                                    <i class="@(i<=rate.Rate?"fas":"far") fa-star fa-sm text-warning me-1"></i>
+                                </li>
+                            }
+                        </ul>
+                        <h5 class="fw-bold p-0 m-0 pt-2">@rate.CustomerName</h5>
+                        <h6 class="text-primary p-0">Customer</h6>
+                        <p class="">
+                            <i class="fas fa-quote-left pe-2 comment"></i>@rate.CustomerComment
+                        </p>
+                    </div>
+                }
+                
+               
+            </div>
+        </section>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+        const updateTotalPrice = () => {
+            let quantityInput = document.getElementById('quantity_' + @Model.Id);
+            let totalPrice = @Model.Price * parseInt(quantityInput.value);
+            document.getElementById('totalPrice').innerText = totalPrice.toFixed(2);
+        }
+
+        const incrementQuantity = (productId, unitsInStock) => {
+            let quantityInput = document.getElementById('quantity_' + productId);
+            let currentQuantity = parseInt(quantityInput.value);
+
+            if (currentQuantity >= unitsInStock) {
+                let stockAlert = document.getElementById('stockAlert');
+                stockAlert.style.display = 'block';
+                setTimeout(function () {
+                    stockAlert.style.display = 'none';
+                }, 3000);
+                return;
+            }
+
+            quantityInput.value = currentQuantity + 1;
+            updateTotalPrice();
+        }
+
+        const decrementQuantity = (productId) => {
+            let quantityInput = document.getElementById('quantity_' + productId);
+            let currentValue = parseInt(quantityInput.value);
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+                updateTotalPrice();
+            }
+        }
+
+        const addToCart = (productId) => {
+            let quantity = document.getElementById('quantity_' + productId).value;
+
+            window.location.href = `/Cart/AddToCart?productId=${productId}&quantity=${quantity}`;
+
+            let alert = document.getElementById('addToCartAlert');
+            alert.style.display = 'block';
+            setTimeout(function () {
+                alert.style.display = 'none';
+            }, 2000);
+        }
+    </script>
+}
+
+<style>
+    .product-details {
+        margin-top: 20px;
+    }
+
+    .price-section {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .current-price {
+        color: #333;
+        font-weight: bold;
+    }
+
+    .old-price {
+        text-decoration: line-through;
+        color: #aaa;
+        margin-left: 10px;
+    }
+
+    .discount {
+        color: red;
+        margin-left: 10px;
+    }
+
+    .product-description {
+        color: #666;
+        font-size: 16px;
+    }
+
+    .quantity-control button {
+        width: 40px;
+    }
+
+    .add-to-cart {
+        width: 100%;
+        background-color: #000;
+        color: white;
+        padding: 10px;
+    }
+
+    .add-to-cart:hover {
+        background-color: #333;
+    }
+
+    .discount-badge {
+        display: inline-block;
+        background-color: rgba(255, 0, 0, 0.1);
+        color: red;
+        font-size: 0.9rem;
+        font-weight: bold;
+        padding: 5px 12px;
+        border-radius: 20px;
+        margin-left: 10px;
+    }
+
+    .rate-container {
+        border: solid 1px #E6E6E6;
+        border-radius: 20px;
+        min-width: 240px;
+    }
+
+    .stars-container {
+        width: fit-content;
+    }
+
+    .fa-star {
+        font-size: 1.1rem
+    }
+
+    .comment {
+        color: #666666
+    }
+</style>

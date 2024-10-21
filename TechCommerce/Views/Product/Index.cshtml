@@ -1,0 +1,129 @@
+﻿@model ProductsViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    ViewData["Controller"] = "Product";
+    ViewData["Action"] = "Index";
+    Pager pager = new Pager();
+
+    int pageNo = 0;
+
+    if (Model.pagerViewModel.Pager != null)
+    {
+        pager = Model.pagerViewModel.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+<h1 class="items-header pt-4 mb-3">Featured Items</h1>
+
+<!-- Search and Filter form -->
+<partial name="_SearchAndCategoryFilter" model="@Model" />
+@if (User.IsInRole("Admin"))
+{
+    <a asp-controller="Product" asp-action="Add" class="btn btn-success m-2 rounded">Add product</a>
+}
+
+<div class="container mt-5">
+    <div class="row">
+        @foreach (var product in Model.products)
+        {
+            <div class="col-md-3 mb-4">
+                <a asp-action="ShowDetails" asp-controller="Product" asp-route-id="@product.Id" class="card-button">
+                    <div class="card h-100 text-center p-3">
+                        <div class="img-container">
+                            <img src="@product.ImageUrl" alt="@product.Name" class="card-img-top img-fluid pb-0 mb-0">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-dark">@product.Name</h5>
+                            <div class="d-flex justify-content-center mb-2">
+                                <!-- Rating -->
+                                @* <span class="me-1">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+                            <span>@product.Rating / 5</span> *@
+                            </div>
+                            <div>
+                                <span class="fw-bold text-dark">$@product.Price</span>
+                                <span class="text-muted text-decoration-line-through">
+                                    @{
+                                        string total = (product.Price * 1.15M).ToString("0.00");
+                                    }
+                                    $@total
+                                </span>
+                                <span class="discount-badge">-15%</span>
+                            </div>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <td class="mt-5 pt-4">
+                                    <a asp-action="Edit" asp-controller="Product" asp-route-id="@product.Id" class="btn btn-primary mt-3 me-1">Edit</a>
+                                    <a asp-action="Delete" asp-controller="Product" asp-route-id="@product.Id" class="btn btn-danger mt-3">Delete</a>
+                                    <a asp-action="ShowDetails" asp-controller="Product" asp-route-id="@product.Id" class="btn btn-success mt-3 ms-1">Details</a>
+                                </td>
+                            }
+                            @* <div>
+                                @if (product.Units > 0)
+                                {
+                                    <a asp-action="ShowDetails" asp-controller="Product" asp-route-id="@product.Id" class="btn btn-success">Add To Cart</a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-secondary disabled" aria-disabled="true">Add To Cart</a>
+                                }
+                            </div> *@
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<partial name="_Pager" Model="@Model.pagerViewModel" />
+
+<style>
+
+    .items-header{
+        font-size: 2rem;
+        font-weight: 700
+    }
+
+    .img-container {
+        height: 80%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card-img-top {
+        width: 90%; 
+        height: auto; 
+        display: block; 
+    }
+
+    .card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center; 
+        align-items: center;
+        color: #000;
+        overflow: hidden;
+    }
+
+    .card-body {
+        text-align: start;
+    }
+
+    .discount-badge {
+        display: inline-block;
+        background-color: rgba(255, 0, 0, 0.1);
+        color: red;
+        font-size: 0.7rem;
+        font-weight: bold;
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-left: 10px;
+    }
+
+    .card a {
+        text-decoration: none;
+    }
+
+</style>
