@@ -65,5 +65,5 @@ The platform uses **Code-First Migrations** for database management, ensuring se
 
 3. Update the database:
     ```bash
-    database update
+    database-update
     ```
