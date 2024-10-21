@@ -1,6 +1,6 @@
 # PhoneTech Shop
 
-**PhoneTech** is a robust eCommerce platform designed to manage products, orders, categories, and users with distinct admin and customer functionalities. The system leverages modern technologies and design patterns for maintainability, security, and scalability.
+**PhoneTech** is a robust eCommerce platform designed to manage products, orders, categories, and users with distinct admin and customer functionalities. The system leverages modern technologies, including .NET MVC and Entity Framework, alongside design patterns for maintainability, security, and scalability.
 
 ## Table of Contents
 - [Project Overview](#project-overview)
